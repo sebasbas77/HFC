@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>OBSERVACIÓN GPON</title>
+    <title>OBSERVACIÓN HFC</title>
     <style>
         :root {
             --primary-color: #007bff;
@@ -159,27 +159,31 @@
 
 <body>
     <div class="container">
-        <h1>OBSERVACIÓN GPON</h1>
+        <h1>OBSERVACIÓN HFC</h1>
         <form id="dataForm">
             <div class="form-group">
-                <label for="instalacion">INSTALACIÓN GPON</label>
-                <input type="text" id="instalacion" placeholder="N. Orden">
+                <label for="instalacion">INSTALACIÓN HTC</label>
+                <input type="text" id="instalacion" placeholder="N. de Orden">
             </div>
             <div class="form-group">
                 <label for="cuadrilla">CUADRILLA</label>
                 <input type="text" id="cuadrilla" placeholder=" ">
             </div>
             <div class="form-group">
-                <label for="potencia">Potencia TX (dBm)</label>
-                <input type="text" id="potencia" placeholder="entre -8 a -23">
+                <label for="potenciaDw">Potencia DW (dBm)</label>
+                <input type="text" id="potenciaDw" placeholder="Añade dBm">
             </div>
             <div class="form-group">
-                <label for="cluster">CLÚSTER</label>
-                <input type="text" id="cluster" placeholder="ID">
+                <label for="potenciaUp">Potencia UP (dBm)</label>
+                <input type="text" id="potenciaUp" placeholder="Añade dBm">
             </div>
             <div class="form-group">
-                <label for="nap">NAP</label>
-                <input type="text" id="nap" placeholder="ID">
+                <label for="tap">TAP</label>
+                <input type="text" id="tap" placeholder="ID">
+            </div>
+            <div class="form-group">
+                <label for="placa">PLACA</label>
+                <input type="text" id="placa" placeholder="ID">
             </div>
             <div class="form-group">
                 <label for="puerto">PUERTO</label>
@@ -191,37 +195,52 @@
             </div>
             <div class="form-group">
                 <label for="latitud">LATITUD</label>
-                <input type="text" id="latitud" readonly placeholder="Latitud">
+                <input type="text" id="latitud" readonly placeholder="Decimal">
             </div>
             <div class="form-group">
                 <label for="longitud">LONGITUD</label>
-                <input type="text" id="longitud" readonly placeholder="Longitud">
+                <input type="text" id="longitud" readonly placeholder="Decimal">
             </div>
             <div class="address" id="address"></div>
             <div class="form-group">
-                <label for="serie">SERIE EQUIPO ONT</label>
+                <label for="serie">SERIE EQUIPO SGA</label>
                 <input type="text" id="serie" placeholder="Serial">
             </div>
             <div class="form-group">
-                <label for="metraje1">METRAJE (metros)</label>
-                <input type="text" id="metraje1" placeholder="Metros">
-                <input type="text" id="metraje2" style="margin-left: 10px;" placeholder="ZTE o HUAWEI">
+                <label for="metrajeNegro">METRAJE CABLE NEGRO</label>
+                <input type="text" id="metrajeNegro" placeholder="Metros">
             </div>
             <div class="form-group">
-                <label for="gancho">GANCHO TENSOR</label>
-                <input type="text" id="gancho" placeholder="Virola">
+                <label for="metrajeBlanco">METRAJE CABLE BLANCO</label>
+                <input type="text" id="metrajeBlanco" placeholder="Metros">
             </div>
             <div class="form-group">
-                <label for="grapas">GRAPAS</label>
-                <input type="text" id="grapas" placeholder="Cuadradas negras">
+                <label for="gancho">GANCHO RETENEDOR</label>
+                <input type="text" id="gancho" placeholder="Unidades">
             </div>
             <div class="form-group">
-                <label for="amarras10">AMARRAS 10</label>
-                <input type="text" id="amarras10" placeholder="Unidades">
+                <label for="grapasNegras">GRAPAS NEGRAS</label>
+                <input type="text" id="grapasNegras" placeholder="Unidades">
+            </div>
+            <div class="form-group">
+                <label for="grapasBlancas">GRAPAS BLANCAS</label>
+                <input type="text" id="grapasBlancas" placeholder="Unidades">
             </div>
             <div class="form-group">
                 <label for="amarras20">AMARRAS 20</label>
                 <input type="text" id="amarras20" placeholder="Unidades">
+            </div>
+            <div class="form-group">
+                <label for="conectores">CONECTORES RG06</label>
+                <input type="text" id="conectores" placeholder="Unidades">
+            </div>
+            <div class="form-group">
+                <label for="atenuador">ATENUADOR</label>
+                <input type="text" id="atenuador" placeholder="Añade dBm">
+            </div>
+            <div class="form-group">
+                <label for="groundBlock">GROUND BLOCK</label>
+                <input type="text" id="groundBlock" placeholder="Unidad">
             </div>
             <div class="form-group">
                 <label for="numIptv">Número IPTV</label>
@@ -338,9 +357,10 @@
 
         function generateText() {
             const fields = [
-                'instalacion', 'cuadrilla', 'potencia', 'cluster', 'nap',
+                'instalacion', 'cuadrilla', 'potenciaDw', 'potenciaUp', 'tap', 'placa',
                 'puerto', 'precinto', 'latitud', 'longitud', 'serie',
-                'metraje1', 'metraje2', 'gancho', 'grapas', 'amarras10', 'amarras20'
+                'metrajeNegro', 'metrajeBlanco', 'gancho', 'grapasNegras', 'grapasBlancas', 
+                'amarras20', 'conectores', 'atenuador', 'groundBlock'
             ];
             let isValid = true;
 
@@ -412,7 +432,7 @@
                 return acc;
             }, {});
 
-            let template = `INSTALACIÓN GPON: ${data.instalacion}, CUADRILLA: ${data.cuadrilla}, Potencia en niveles óptimos Potencia TX: ${data.potencia} dBm, CLÚSTER: ${data.cluster}, NAP: ${data.nap}, PUERTO: ${data.puerto}, PRECINTO: ${data.precinto}, LATITUD: ${data.latitud}, LONGITUD: ${data.longitud}, SERIE EQUIPO ONT: ${data.serie}, METRAJE: ${data.metraje1} (metros) ${data.metraje2}, GANCHO TENSOR: ${data.gancho}, GRAPAS: ${data.grapas}, AMARRAS 10: ${data.amarras10}, AMARRAS 20: ${data.amarras20}.`;
+            let template = `INSTALACIÓN HTC: ${data.instalacion}, CUADRILLA: ${data.cuadrilla}, potencia en niveles óptimos DW: ${data.potenciaDw} dBm UP: ${data.potenciaUp} dBm, TAP: ${data.tap}, PLACA: ${data.placa}, PUERTO: ${data.puerto}, PRECINTO: ${data.precinto}, LATITUD: ${data.latitud}, LONGITUD: ${data.longitud}, SERIE EQUIPÓ SGA: ${data.serie}, METRAJE CABLE NEGRO: ${data.metrajeNegro} (metros), CABLE BLANCO: ${data.metrajeBlanco} (metros), GANCHO RETENEDOR: ${data.gancho}, GRAPAS NEGRAS: ${data.grapasNegras}, GRAPAS BLANCAS: ${data.grapasBlancas}, AMARRAS 20: ${data.amarras20}, CONECTORES RG06: ${data.conectores}, ATENUADOR: ${data.atenuador}, GROUND BLOCK: ${data.groundBlock}.`;
 
             if (numIptv == 0) {
                 template += ` ATIENDE: ${document.getElementById('atiende').value.trim()}, OPERADOR: ${document.getElementById('operador').value.trim()}, Servicio operativo en equipos del cliente, navegación en niveles correctos.`;
@@ -494,3 +514,4 @@
 </body>
 
 </html>
+
