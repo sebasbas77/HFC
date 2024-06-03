@@ -1,0 +1,496 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OBSERVACIÓN GPON</title>
+    <style>
+        :root {
+            --primary-color: #007bff;
+            --primary-hover: #0056b3;
+            --background-color: #f0f0f0;
+            --container-bg: #ffffff;
+            --text-color: #333333;
+            --error-color: red;
+            --border-color: #cccccc;
+            --input-bg: #f9f9f9;
+            --shadow-color: rgba(0, 0, 0, 0.1);
+            --success-color: #28a745;
+            --address-color: #777777;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            padding: 0;
+            margin: 0;
+            background-color: var(--background-color);
+        }
+
+        .container {
+            width: 100%;
+            max-width: 600px;
+            padding: 20px;
+            background-color: var(--container-bg);
+            box-shadow: 0 0 10px var(--shadow-color);
+            border-radius: 8px;
+            margin: 20px auto;
+            box-sizing: border-box;
+        }
+
+        h1 {
+            text-align: center;
+            font-size: 1.5em;
+            color: var(--text-color);
+            margin-bottom: 20px;
+        }
+
+        .form-group {
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
+            flex-wrap: wrap;
+        }
+
+        label {
+            flex: 1;
+            min-width: 110px;
+            margin-right: 10px;
+            font-weight: bold;
+            color: var(--text-color);
+            word-wrap: break-word;
+        }
+
+        input,
+        textarea,
+        select {
+            flex: 3;
+            padding: 8px;
+            font-size: 0.9em;
+            border: 1px solid var(--border-color);
+            border-radius: 5px;
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        input.error,
+        textarea.error {
+            border-color: var(--error-color);
+        }
+
+        .buttons {
+            display: flex;
+            justify-content: space-between;
+            flex-wrap: wrap;
+        }
+
+        button {
+            flex: 1;
+            padding: 10px;
+            font-size: 1em;
+            color: #ffffff;
+            background-color: var(--primary-color);
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-top: 10px;
+            transition: background-color 0.3s ease;
+        }
+
+        button:first-child {
+            margin-right: 10px;
+        }
+
+        button:hover {
+            background-color: var(--primary-hover);
+        }
+
+        .output {
+            margin-top: 20px;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+            background-color: var(--input-bg);
+            padding: 15px;
+            border-radius: 5px;
+            border: 1px solid #e0e0e0;
+            font-size: 0.9em;
+            color: var(--text-color);
+            position: relative;
+        }
+
+        .copied {
+            display: none;
+            position: absolute;
+            top: -25px;
+            right: 10px;
+            font-size: 0.9em;
+            color: var(--success-color);
+        }
+
+        .copied.show {
+            display: block;
+        }
+
+        .notification {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: var(--success-color);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            display: none;
+        }
+
+        .notification.show {
+            display: block;
+        }
+
+        .address {
+            font-size: 0.8em;
+            color: var(--address-color);
+            margin-top: -10px;
+            margin-left: 120px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1>OBSERVACIÓN GPON</h1>
+        <form id="dataForm">
+            <div class="form-group">
+                <label for="instalacion">INSTALACIÓN GPON</label>
+                <input type="text" id="instalacion" placeholder="N. Orden">
+            </div>
+            <div class="form-group">
+                <label for="cuadrilla">CUADRILLA</label>
+                <input type="text" id="cuadrilla" placeholder=" ">
+            </div>
+            <div class="form-group">
+                <label for="potencia">Potencia TX (dBm)</label>
+                <input type="text" id="potencia" placeholder="entre -8 a -23">
+            </div>
+            <div class="form-group">
+                <label for="cluster">CLÚSTER</label>
+                <input type="text" id="cluster" placeholder="ID">
+            </div>
+            <div class="form-group">
+                <label for="nap">NAP</label>
+                <input type="text" id="nap" placeholder="ID">
+            </div>
+            <div class="form-group">
+                <label for="puerto">PUERTO</label>
+                <input type="text" id="puerto" placeholder="Número">
+            </div>
+            <div class="form-group">
+                <label for="precinto">PRECINTO</label>
+                <input type="text" id="precinto" placeholder="Número">
+            </div>
+            <div class="form-group">
+                <label for="latitud">LATITUD</label>
+                <input type="text" id="latitud" readonly placeholder="Latitud">
+            </div>
+            <div class="form-group">
+                <label for="longitud">LONGITUD</label>
+                <input type="text" id="longitud" readonly placeholder="Longitud">
+            </div>
+            <div class="address" id="address"></div>
+            <div class="form-group">
+                <label for="serie">SERIE EQUIPO ONT</label>
+                <input type="text" id="serie" placeholder="Serial">
+            </div>
+            <div class="form-group">
+                <label for="metraje1">METRAJE (metros)</label>
+                <input type="text" id="metraje1" placeholder="Metros">
+                <input type="text" id="metraje2" style="margin-left: 10px;" placeholder="ZTE o HUAWEI">
+            </div>
+            <div class="form-group">
+                <label for="gancho">GANCHO TENSOR</label>
+                <input type="text" id="gancho" placeholder="Virola">
+            </div>
+            <div class="form-group">
+                <label for="grapas">GRAPAS</label>
+                <input type="text" id="grapas" placeholder="Cuadradas negras">
+            </div>
+            <div class="form-group">
+                <label for="amarras10">AMARRAS 10</label>
+                <input type="text" id="amarras10" placeholder="Unidades">
+            </div>
+            <div class="form-group">
+                <label for="amarras20">AMARRAS 20</label>
+                <input type="text" id="amarras20" placeholder="Unidades">
+            </div>
+            <div class="form-group">
+                <label for="numIptv">Número IPTV</label>
+                <select id="numIptv" onchange="generateIptvFields()">
+                    <option value="0">0</option>
+                    <option value="1">1</option>
+                    <option value="2">2</option>
+                    <option value="3">3</option>
+                </select>
+            </div>
+            <div id="iptvFields"></div>
+            <div class="buttons">
+                <button type="button" onclick="generateText()">Generar Texto</button>
+                <button type="button" onclick="copyText()">Copiar Texto</button>
+            </div>
+        </form>
+        <div class="output" id="output"></div>
+        <div class="copied" id="copiedMessage">Texto copiado</div>
+        <div class="notification" id="notification">Texto copiado al portapapeles</div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', (event) => {
+            getLocation();
+            adjustStyles();
+            window.addEventListener('resize', adjustStyles);
+            generateIptvFields(); // Generate fields for the default selection on load
+        });
+
+        function adjustStyles() {
+            const width = window.innerWidth;
+            const root = document.documentElement;
+            if (width <= 600) {
+                root.style.setProperty('--primary-color', '#007bff');
+                root.style.setProperty('--primary-hover', '#0056b3');
+                root.style.setProperty('--background-color', '#f0f0f0');
+                root.style.setProperty('--container-bg', '#ffffff');
+                root.style.setProperty('--text-color', '#333333');
+                root.style.setProperty('--error-color', 'red');
+                root.style.setProperty('--border-color', '#cccccc');
+                root.style.setProperty('--input-bg', '#f9f9f9');
+                root.style.setProperty('--shadow-color', 'rgba(0, 0, 0, 0.1)');
+                root.style.setProperty('--success-color', '#28a745');
+            } else {
+                root.style.setProperty('--primary-color', '#007bff');
+                root.style.setProperty('--primary-hover', '#0056b3');
+                root.style.setProperty('--background-color', '#f0f0f0');
+                root.style.setProperty('--container-bg', '#ffffff');
+                root.style.setProperty('--text-color', '#333333');
+                root.style.setProperty('--error-color', 'red');
+                root.style.setProperty('--border-color', '#cccccc');
+                root.style.setProperty('--input-bg', '#f9f9f9');
+                root.style.setProperty('--shadow-color', 'rgba(0, 0, 0, 0.1)');
+                root.style.setProperty('--success-color', '#28a745');
+            }
+        }
+
+        function generateIptvFields() {
+            const numIptv = document.getElementById('numIptv').value;
+            const iptvFields = document.getElementById('iptvFields');
+            iptvFields.innerHTML = '';
+
+            if (numIptv == 0) {
+                iptvFields.innerHTML += `
+                    <div class="form-group">
+                        <label for="atiende">ATIENDE</label>
+                        <input type="text" id="atiende" placeholder="Nombre y apellido">
+                    </div>
+                    <div class="form-group">
+                        <label for="operador">OPERADOR</label>
+                        <input type="text" id="operador" placeholder="Nombre y apellido">
+                    </div>
+                `;
+            } else {
+                for (let i = 0; i < numIptv; i++) {
+                    iptvFields.innerHTML += `
+                        <div class="form-group">
+                            <label for="decodificador${i}">DECODIFICADOR ${i === 0 ? 'PRINCIPAL' : `ADICIONAL ${i}`}</label>
+                            <input type="text" id="decodificador${i}" placeholder="Ingrese el decodificador ${i === 0 ? 'principal' : `adicional ${i}`}">
+                        </div>
+                        <div class="form-group">
+                            <label>MATERIAL TV</label>
+                        </div>
+                        <div class="form-group">
+                            <label for="datoUtp${i}">UTP</label>
+                            <input type="text" id="datoUtp${i}" placeholder="Metros">
+                        </div>
+                        <div class="form-group">
+                            <label for="datoRj45${i}">RJ45</label>
+                            <input type="text" id="datoRj45${i}" placeholder="Unidades">
+                        </div>
+                        <div class="form-group">
+                            <label for="datoGrapas${i}">GRAPAS</label>
+                            <input type="text" id="datoGrapas${i}" placeholder="Cuadradas blancas">
+                        </div>
+                        <div class="form-group">
+                            <label for="datoControles${i}">CONTROLES</label>
+                            <input type="text" id="datoControles${i}" placeholder="Unidades">
+                        </div>
+                    `;
+                }
+                iptvFields.innerHTML += `
+                    <div class="form-group">
+                        <label for="atiende">ATIENDE</label>
+                        <input type="text" id="atiende" placeholder="Nombre y apellido">
+                    </div>
+                    <div class="form-group">
+                        <label for="operador">OPERADOR</label>
+                        <input type="text" id="operador" placeholder="Nombre y apellido">
+                    </div>
+                `;
+            }
+        }
+
+        function generateText() {
+            const fields = [
+                'instalacion', 'cuadrilla', 'potencia', 'cluster', 'nap',
+                'puerto', 'precinto', 'latitud', 'longitud', 'serie',
+                'metraje1', 'metraje2', 'gancho', 'grapas', 'amarras10', 'amarras20'
+            ];
+            let isValid = true;
+
+            fields.forEach(field => {
+                const inputElement = document.getElementById(field);
+                if (!inputElement.value.trim()) {
+                    inputElement.classList.add('error');
+                    isValid = false;
+                } else {
+                    inputElement.classList.remove('error');
+                }
+            });
+
+            const numIptv = document.getElementById('numIptv').value;
+            if (numIptv == 0) {
+                const atiende = document.getElementById('atiende').value.trim();
+                const operador = document.getElementById('operador').value.trim();
+
+                if (!atiende || !operador) {
+                    isValid = false;
+                    if (!atiende) document.getElementById('atiende').classList.add('error');
+                    if (!operador) document.getElementById('operador').classList.add('error');
+                } else {
+                    document.getElementById('atiende').classList.remove('error');
+                    document.getElementById('operador').classList.remove('error');
+                }
+            } else {
+                for (let i = 0; i < numIptv; i++) {
+                    const decodificador = document.getElementById(`decodificador${i}`).value.trim();
+                    const datoUtp = document.getElementById(`datoUtp${i}`).value.trim();
+                    const datoRj45 = document.getElementById(`datoRj45${i}`).value.trim();
+                    const datoGrapas = document.getElementById(`datoGrapas${i}`).value.trim();
+                    const datoControles = document.getElementById(`datoControles${i}`).value.trim();
+
+                    if (!decodificador || !datoUtp || !datoRj45 || !datoGrapas || !datoControles) {
+                        isValid = false;
+                        if (!decodificador) document.getElementById(`decodificador${i}`).classList.add('error');
+                        if (!datoUtp) document.getElementById(`datoUtp${i}`).classList.add('error');
+                        if (!datoRj45) document.getElementById(`datoRj45${i}`).classList.add('error');
+                        if (!datoGrapas) document.getElementById(`datoGrapas${i}`).classList.add('error');
+                        if (!datoControles) document.getElementById(`datoControles${i}`).classList.add('error');
+                    } else {
+                        document.getElementById(`decodificador${i}`).classList.remove('error');
+                        document.getElementById(`datoUtp${i}`).classList.remove('error');
+                        document.getElementById(`datoRj45${i}`).classList.remove('error');
+                        document.getElementById(`datoGrapas${i}`).classList.remove('error');
+                        document.getElementById(`datoControles${i}`).classList.remove('error');
+                    }
+                }
+                const atiende = document.getElementById('atiende').value.trim();
+                const operador = document.getElementById('operador').value.trim();
+
+                if (!atiende || !operador) {
+                    isValid = false;
+                    if (!atiende) document.getElementById('atiende').classList.add('error');
+                    if (!operador) document.getElementById('operador').classList.add('error');
+                } else {
+                    document.getElementById('atiende').classList.remove('error');
+                    document.getElementById('operador').classList.remove('error');
+                }
+            }
+
+            if (!isValid) {
+                return;
+            }
+
+            const data = fields.reduce((acc, field) => {
+                acc[field] = document.getElementById(field).value.trim();
+                return acc;
+            }, {});
+
+            let template = `INSTALACIÓN GPON: ${data.instalacion}, CUADRILLA: ${data.cuadrilla}, Potencia en niveles óptimos Potencia TX: ${data.potencia} dBm, CLÚSTER: ${data.cluster}, NAP: ${data.nap}, PUERTO: ${data.puerto}, PRECINTO: ${data.precinto}, LATITUD: ${data.latitud}, LONGITUD: ${data.longitud}, SERIE EQUIPO ONT: ${data.serie}, METRAJE: ${data.metraje1} (metros) ${data.metraje2}, GANCHO TENSOR: ${data.gancho}, GRAPAS: ${data.grapas}, AMARRAS 10: ${data.amarras10}, AMARRAS 20: ${data.amarras20}.`;
+
+            if (numIptv == 0) {
+                template += ` ATIENDE: ${document.getElementById('atiende').value.trim()}, OPERADOR: ${document.getElementById('operador').value.trim()}, Servicio operativo en equipos del cliente, navegación en niveles correctos.`;
+            } else {
+                for (let i = 0; i < numIptv; i++) {
+                    template += ` DECODIFICADOR ${i === 0 ? 'PRINCIPAL' : `ADICIONAL ${i}`}: ${document.getElementById(`decodificador${i}`).value.trim()}, MATERIAL TV, ${document.getElementById(`datoUtp${i}`).value.trim()} UTP, ${document.getElementById(`datoRj45${i}`).value.trim()} RJ45, ${document.getElementById(`datoGrapas${i}`).value.trim()} GRAPAS, ${document.getElementById(`datoControles${i}`).value.trim()} CONTROLES, `;
+                }
+                template += `ATIENDE: ${document.getElementById('atiende').value.trim()}, OPERADOR: ${document.getElementById('operador').value.trim()}, Servicio operativo en equipos del cliente, navegación en niveles correctos.`;
+            }
+
+            document.getElementById('output').innerText = template;
+        }
+
+        function copyText() {
+            const outputElement = document.getElementById('output');
+            navigator.clipboard.writeText(outputElement.innerText).then(() => {
+                showCopiedMessage();
+                showNotification();
+            }, (err) => {
+                console.error('Error al copiar el texto: ', err);
+            });
+        }
+
+        function showCopiedMessage() {
+            const copiedMessage = document.getElementById('copiedMessage');
+            copiedMessage.classList.add('show');
+            setTimeout(() => {
+                copiedMessage.classList.remove('show');
+            }, 2000);
+        }
+
+        function showNotification() {
+            const notification = document.getElementById('notification');
+            notification.classList.add('show');
+            setTimeout(() => {
+                notification.classList.remove('show');
+            }, 2000);
+        }
+
+        function getLocation() {
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(showPosition, showError);
+            } else {
+                alert("La geolocalización no es soportada por este navegador.");
+            }
+        }
+
+        function showPosition(position) {
+            const lat = position.coords.latitude;
+            const lon = position.coords.longitude;
+            document.getElementById('latitud').value = lat;
+            document.getElementById('longitud').value = lon;
+            fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}`)
+                .then(response => response.json())
+                .then(data => {
+                    const address = data.display_name;
+                    document.getElementById('address').innerText = `Dirección: ${address}`;
+                })
+                .catch(error => console.error('Error al obtener la dirección:', error));
+        }
+
+        function showError(error) {
+            switch (error.code) {
+                case error.PERMISSION_DENIED:
+                    alert("El usuario negó la solicitud de geolocalización.");
+                    break;
+                case error.POSITION_UNAVAILABLE:
+                    alert("La información de ubicación no está disponible.");
+                    break;
+                case error.TIMEOUT:
+                    alert("La solicitud para obtener la ubicación ha caducado.");
+                    break;
+                case error.UNKNOWN_ERROR:
+                    alert("Se ha producido un error desconocido.");
+                    break;
+            }
+        }
+    </script>
+</body>
+
+</html>
