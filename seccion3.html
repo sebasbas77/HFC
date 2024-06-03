@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>WIFI MESH GPON</title>
+    <title>WIFI MESH HFC</title>
     <style>
         :root {
             --primary-color: #007bff;
@@ -149,7 +149,7 @@
 
 <body>
     <div class="container">
-        <h1>WIFI MESH GPON</h1>
+        <h1>WIFI MESH HFC</h1>
         <form id="section4Form">
             <div class="form-group">
                 <label for="numWifiMesh">NUM WIFI MESH</label>
@@ -222,7 +222,7 @@
             if (numWifiMesh == 0) {
                 template = ''; // No incluye, no se genera texto.
             } else {
-                template += 'WIFI MESH GPON.\n\n';
+                template += 'WIFI MESH HFC.\n\n';
                 for (let i = 1; i <= numWifiMesh; i++) {
                     const marca = document.getElementById(`marca${i}`).value.trim();
                     const modelo = document.getElementById(`modelo${i}`).value.trim();
