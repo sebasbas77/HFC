@@ -162,7 +162,7 @@
         <h1>OBSERVACIÓN HFC</h1>
         <form id="dataForm">
             <div class="form-group">
-                <label for="instalacion">INSTALACIÓN HTC</label>
+                <label for="instalacion">INSTALACIÓN HFC</label>
                 <input type="text" id="instalacion" placeholder="N. de Orden">
             </div>
             <div class="form-group">
@@ -432,7 +432,7 @@
                 return acc;
             }, {});
 
-            let template = `INSTALACIÓN HTC: ${data.instalacion}, CUADRILLA: ${data.cuadrilla}, potencia en niveles óptimos DW: ${data.potenciaDw} dBm UP: ${data.potenciaUp} dBm, TAP: ${data.tap}, PLACA: ${data.placa}, PUERTO: ${data.puerto}, PRECINTO: ${data.precinto}, LATITUD: ${data.latitud}, LONGITUD: ${data.longitud}, SERIE EQUIPÓ SGA: ${data.serie}, METRAJE CABLE NEGRO: ${data.metrajeNegro} (metros), CABLE BLANCO: ${data.metrajeBlanco} (metros), GANCHO RETENEDOR: ${data.gancho}, GRAPAS NEGRAS: ${data.grapasNegras}, GRAPAS BLANCAS: ${data.grapasBlancas}, AMARRAS 20: ${data.amarras20}, CONECTORES RG06: ${data.conectores}, ATENUADOR: ${data.atenuador}, GROUND BLOCK: ${data.groundBlock}.`;
+            let template = `INSTALACIÓN HFC: ${data.instalacion}, CUADRILLA: ${data.cuadrilla}, potencia en niveles óptimos DW: ${data.potenciaDw} dBm UP: ${data.potenciaUp} dBm, TAP: ${data.tap}, PLACA: ${data.placa}, PUERTO: ${data.puerto}, PRECINTO: ${data.precinto}, LATITUD: ${data.latitud}, LONGITUD: ${data.longitud}, SERIE EQUIPÓ SGA: ${data.serie}, METRAJE CABLE NEGRO: ${data.metrajeNegro} (metros), CABLE BLANCO: ${data.metrajeBlanco} (metros), GANCHO RETENEDOR: ${data.gancho}, GRAPAS NEGRAS: ${data.grapasNegras}, GRAPAS BLANCAS: ${data.grapasBlancas}, AMARRAS 20: ${data.amarras20}, CONECTORES RG06: ${data.conectores}, ATENUADOR: ${data.atenuador}, GROUND BLOCK: ${data.groundBlock}.`;
 
             if (numIptv == 0) {
                 template += ` ATIENDE: ${document.getElementById('atiende').value.trim()}, OPERADOR: ${document.getElementById('operador').value.trim()}, Servicio operativo en equipos del cliente, navegación en niveles correctos.`;
